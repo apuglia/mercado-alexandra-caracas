@@ -63,9 +63,16 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const text = await response.text();
+      let errorMessage = "Error al procesar la lista";
+      try {
+        const error = JSON.parse(text);
+        errorMessage = error.error?.message || errorMessage;
+      } catch {
+        errorMessage = text || `Error ${response.status}`;
+      }
       return NextResponse.json(
-        { error: error.error?.message || "Error al procesar la lista" },
+        { error: errorMessage },
         { status: response.status }
       );
     }
