@@ -5,7 +5,6 @@ import { useAppState } from "@/hooks/useAppState";
 import RawInputPanel from "@/components/RawInputPanel";
 import OutputPanel from "@/components/OutputPanel";
 import ActionBar from "@/components/ActionBar";
-import ApiKeyModal from "@/components/ApiKeyModal";
 import Toast from "@/components/Toast";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
     isHydrated,
     setRawInput,
     setMergeMode,
-    setApiKey,
     updateItem,
     deleteItem,
     generateList,
@@ -24,14 +22,10 @@ export default function Home() {
     setError,
   } = useAppState();
 
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Show API key modal if not configured
-  const needsApiKey = isHydrated && !state.apiKey;
-
   const handleCopied = useCallback(() => {
-    setToast({ message: "Copiado. Pégalo en WhatsApp ✅", type: "success" });
+    setToast({ message: "Copiado. Pegalo en WhatsApp", type: "success" });
   }, []);
 
   const handleCloseToast = useCallback(() => {
@@ -59,7 +53,7 @@ export default function Home() {
       <header className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
         <div className="max-w-lg mx-auto">
           <h1 className="text-lg font-semibold text-gray-800">
-            🛒 Mercado Alexandra
+            Mercado Alexandra
           </h1>
           <p className="text-xs text-gray-400">
             Lista de compras inteligente
@@ -77,8 +71,6 @@ export default function Home() {
           isLoading={isLoading}
           mergeMode={state.mergeMode}
           onMergeModeChange={setMergeMode}
-          hasApiKey={!!state.apiKey}
-          onConfigureApiKey={() => setShowApiKeyModal(true)}
         />
 
         <OutputPanel
@@ -90,14 +82,6 @@ export default function Home() {
 
       {/* Action bar */}
       <ActionBar items={state.items} onCopied={handleCopied} />
-
-      {/* API Key Modal */}
-      <ApiKeyModal
-        isOpen={needsApiKey || showApiKeyModal}
-        currentKey={state.apiKey}
-        onSave={setApiKey}
-        onClose={() => setShowApiKeyModal(false)}
-      />
 
       {/* Toast */}
       <Toast

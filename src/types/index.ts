@@ -43,7 +43,6 @@ export type AppState = {
   items: Item[];
   mergeMode: MergeMode;
   lastGeneratedAt: number | null;
-  apiKey: string | null;
 };
 
 export type LLMItem = {

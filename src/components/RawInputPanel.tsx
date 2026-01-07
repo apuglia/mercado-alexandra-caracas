@@ -10,8 +10,6 @@ interface RawInputPanelProps {
   isLoading: boolean;
   mergeMode: MergeMode;
   onMergeModeChange: (mode: MergeMode) => void;
-  hasApiKey: boolean;
-  onConfigureApiKey: () => void;
 }
 
 export default function RawInputPanel({
@@ -22,11 +20,9 @@ export default function RawInputPanel({
   isLoading,
   mergeMode,
   onMergeModeChange,
-  hasApiKey,
-  onConfigureApiKey,
 }: RawInputPanelProps) {
   const handleClear = () => {
-    if (confirm("¿Borrar todo?")) {
+    if (confirm("Borrar todo?")) {
       onClear();
     }
   };
@@ -35,23 +31,17 @@ export default function RawInputPanel({
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold text-gray-800">Lista de compras</h2>
-        <button
-          onClick={onConfigureApiKey}
-          className="text-xs text-gray-500 hover:text-green-600 transition-colors"
-        >
-          {hasApiKey ? "⚙️ API Key" : "🔑 Configurar API"}
-        </button>
       </div>
 
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="pollo 2kg, arroz, yogurt x4, huevos, tomate 🍅, leche..."
+        placeholder="pollo 2kg, arroz, yogurt x4, huevos, tomate, leche..."
         className="w-full h-40 px-4 py-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-800 placeholder:text-gray-400"
       />
 
       <p className="text-xs text-gray-400 mt-2 mb-4">
-        💡 Pega desde WhatsApp o escribe como quieras
+        Pega desde WhatsApp o escribe como quieras
       </p>
 
       {/* Merge mode toggle */}
@@ -82,23 +72,23 @@ export default function RawInputPanel({
       <div className="flex gap-3">
         <button
           onClick={onGenerate}
-          disabled={isLoading || !value.trim() || !hasApiKey}
+          disabled={isLoading || !value.trim()}
           className="flex-1 py-3 px-4 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
-              <span className="animate-spin">⏳</span>
+              <span className="animate-spin">...</span>
               Procesando...
             </>
           ) : (
-            <>✨ Generar lista</>
+            <>Generar lista</>
           )}
         </button>
         <button
           onClick={handleClear}
           className="py-3 px-4 border border-gray-300 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-colors"
         >
-          🗑️
+          Borrar
         </button>
       </div>
     </div>

@@ -12,7 +12,6 @@ const initialState: AppState = {
   items: [],
   mergeMode: "merge",
   lastGeneratedAt: null,
-  apiKey: null,
 };
 
 export function useAppState() {
@@ -27,7 +26,9 @@ export function useAppState() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setState((prev) => ({ ...prev, ...parsed }));
+        // Remove apiKey from old saved state if present
+        const { apiKey, ...rest } = parsed;
+        setState((prev) => ({ ...prev, ...rest }));
       } catch {
         // Ignore parse errors
       }
@@ -48,10 +49,6 @@ export function useAppState() {
 
   const setMergeMode = useCallback((mergeMode: MergeMode) => {
     setState((prev) => ({ ...prev, mergeMode }));
-  }, []);
-
-  const setApiKey = useCallback((apiKey: string) => {
-    setState((prev) => ({ ...prev, apiKey }));
   }, []);
 
   const updateItem = useCallback((id: string, updates: Partial<Item>) => {
@@ -82,11 +79,6 @@ export function useAppState() {
   }, []);
 
   const generateList = useCallback(async () => {
-    if (!state.apiKey) {
-      setError("Configura tu API key primero");
-      return;
-    }
-
     if (!state.rawInput.trim()) {
       setError("Escribe algo para procesar");
       return;
@@ -96,10 +88,7 @@ export function useAppState() {
     setError(null);
 
     try {
-      const llmItems: LLMItem[] = await parseGroceryList(
-        state.rawInput,
-        state.apiKey
-      );
+      const llmItems: LLMItem[] = await parseGroceryList(state.rawInput);
 
       const newItems =
         state.mergeMode === "merge"
@@ -117,14 +106,11 @@ export function useAppState() {
     } finally {
       setIsLoading(false);
     }
-  }, [state.apiKey, state.rawInput, state.mergeMode, state.items]);
+  }, [state.rawInput, state.mergeMode, state.items]);
 
   const clearAll = useCallback(() => {
-    setState({
-      ...initialState,
-      apiKey: state.apiKey, // Keep the API key
-    });
-  }, [state.apiKey]);
+    setState(initialState);
+  }, []);
 
   return {
     state,
@@ -133,7 +119,6 @@ export function useAppState() {
     isHydrated,
     setRawInput,
     setMergeMode,
-    setApiKey,
     updateItem,
     deleteItem,
     generateList,
