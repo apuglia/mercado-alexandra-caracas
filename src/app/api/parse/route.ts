@@ -25,9 +25,13 @@ const VALID_UNITS = [
 export async function POST(request: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
+  console.log("API Key exists:", !!apiKey);
+  console.log("API Key length:", apiKey?.length);
+  console.log("API Key prefix:", apiKey?.substring(0, 10));
+
   if (!apiKey) {
     return NextResponse.json(
-      { error: "API key no configurada en el servidor" },
+      { error: "API key no configurada. Agrega ANTHROPIC_API_KEY en Vercel." },
       { status: 500 }
     );
   }
@@ -62,8 +66,11 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    console.log("Anthropic response status:", response.status);
+
     if (!response.ok) {
       const text = await response.text();
+      console.log("Anthropic error response:", text);
       let errorMessage = "Error al procesar la lista";
       try {
         const error = JSON.parse(text);

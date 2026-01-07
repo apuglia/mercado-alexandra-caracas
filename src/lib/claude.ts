@@ -9,11 +9,23 @@ export async function parseGroceryList(rawText: string): Promise<LLMItem[]> {
     body: JSON.stringify({ rawText }),
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Error al procesar la lista");
+  const text = await response.text();
+
+  if (!text) {
+    throw new Error("El servidor no respondio. Verifica la API key.");
   }
 
-  const data = await response.json();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    console.error("Response was not JSON:", text);
+    throw new Error("Error del servidor. Revisa los logs.");
+  }
+
+  if (!response.ok) {
+    throw new Error(data.error || "Error al procesar la lista");
+  }
+
   return data.items;
 }
